@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Usuário - ONBank</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            color: #000;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 30%;
+            margin: 50px auto;
+            background: #fff;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-size: 2.5rem;
+            text-align: center;
+            color: #0055aa;
+            margin-bottom: 20px;
+            opacity: 0;  /* Esconde inicialmente */
+            animation: fadeIn 2s ease-in-out forwards; /* Animação dura 2s */
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px); /* Move para cima */
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        input {
+            width: 80%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #003366;
+            border-radius: 5px;
+        }
+        button {
+            background: #003366;
+            color: white;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            margin-top: 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #0055aa;
+        }
+        #message {
+            margin-top: 15px;
+            font-weight: bold;
+            color: #0055aa;
+        }
+    </style>
+</head>
+<body>
+    <h1>Bem vindo(a) ao ONBank, o SEU Banco do FUTURO!</h1>
+    <div class="container">
+        <h2>Cadastre-se </h2>
+        <form id="registerForm">
+            <label for="first_name">Nome:</label>
+            <input type="text" id="first_name" name="first_name" required>
+
+            <label for="last_name">Sobrenome:</label>
+            <input type="text" id="last_name" name="last_name" required>
+
+            <label for="cpf">CPF:</label>
+            <input type="text" id="cpf" name="cpf" required>
+
+            <label for="date_of_birth">Data de Nascimento:</label>
+            <input type="date" id="date_of_birth" name="date_of_birth" required>
+
+            <label for="email">E-mail:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="password">Senha:</label>
+            <input type="password" id="password" name="password" required>
+
+            <button type="button" onclick="registerUser()">Cadastrar</button>
+        </form>
+        <p id="message"></p>
+    </div>
+
+    <script>
+        function registerUser() {
+            const formData = {
+                first_name: document.getElementById("first_name").value,
+                last_name: document.getElementById("last_name").value,
+                cpf: document.getElementById("cpf").value,
+                date_of_birth: document.getElementById("date_of_birth").value,
+                email: document.getElementById("email").value,
+                password: document.getElementById("password").value
+            };
+
+            fetch("http://127.0.0.1:8000/api/cadastro/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    document.getElementById("message").innerText = data.message;
+                } else {
+                    document.getElementById("message").innerText = "Erro no cadastro.";
+                }
+            })
+            .catch(error => console.error("Erro:", error));
+        }
+    </script>
+</body>
+</html>
