@@ -1,9 +1,11 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from rest_framework import generics, status, request
+from rest_framework import generics, status
 from autenticacao.models import User
 from .serializers import UserRegisterSerializer
+from django.shortcuts import render, redirect
+import requests
 
 
 class RegisterUserView(generics.CreateAPIView):
@@ -21,7 +23,36 @@ class RegisterUserView(generics.CreateAPIView):
                 status=status.HTTP_201_CREATED
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+   
+def register_user(request):
+    if request.method == "POST":
+        
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        email = request.POST.get('email')
+        cpf = request.POST.get('cpf')
+        date_of_birth = request.POST.get('date_of_birth')
+        password = request.POST.get('password')
+
+        
+        response = requests.post('http://127.0.0.1:8000/api/cadastro/', json={
+            'first_name': first_name,
+            'last_name': last_name,
+            'email': email,
+            'cpf': cpf,
+            'date_of_birth': date_of_birth,
+            'password': password
+        })
+
+        if response.status_code == status.HTTP_201_CREATED:
+            return redirect('login')  # Redireciona para a página de login
+
+        else:
+            errors = response.json()
+            return render(request, 'autenticacao/register.html', {'errors': errors})
+
+    return render(request, 'autenticacao/register.html')
+
 '''
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])  
