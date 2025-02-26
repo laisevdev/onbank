@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - ONBank</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            text-align: center;
+        }
+        
+        .container {
+            width: 50%;
+            margin: auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        
+        .highlight {
+            color: #007bff;
+            font-weight: bold;
+        }
+        
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        input, button {
+            margin: 10px;
+            padding: 10px;
+            width: 80%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        
+        button {
+            background-color: #007bff;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+        }
+        
+        button:hover {
+            background-color: #0056b3;
+        }
+        
+        .register-link {
+            margin-top: 15px;
+        }
+        
+        .register-link a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        #error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Bem-vindo(a) de volta ao <span class="highlight">ONBank</span>!</h1>
+
+        <form id="login-form" method="POST">
+            {% csrf_token %}
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Senha" required>
+            <button type="submit">Entrar</button>
+        </form>
+
+        <p class="register-link">Ainda não tem conta? <a href="{% url 'register_user' %}">Cadastre-se</a></p>
+
+        <div id="error-message" class="hidden">
+            <p>Usuário ou senha incorretos. Tente novamente!</p>
+        </div>
+    </div>
+
+</body>
+</html>
