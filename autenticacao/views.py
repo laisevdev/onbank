@@ -54,7 +54,9 @@ def register_user(request):
 
 def login_user(request):
         return render(request, 'autenticacao/login.html')
-    
+ 
+def dashboard(request):
+        return render(request, 'autenticacao/dashboard.html')   
 '''
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])  
