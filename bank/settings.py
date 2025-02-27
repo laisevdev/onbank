@@ -40,6 +40,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'autenticacao.validators.middleware_token.SlidingTokenAuthenticationMiddleware',
 ]
 
 ROOT_URLCONF = 'bank.urls'
@@ -130,6 +131,8 @@ REST_FRAMEWORK = {
 
 SIMPLE_JWT = {
     "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.SlidingToken",),
-    "SLIDING_TOKEN_LIFETIME": timedelta(minutes=10), 
+    "SLIDING_TOKEN_LIFETIME": timedelta(minutes=2), 
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(minutes=30),  
 }
+
+LOGIN_URL = '/login/' 
