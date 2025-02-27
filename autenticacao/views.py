@@ -82,6 +82,12 @@ def login_user(request):
  
 def dashboard(request):
         return render(request, 'autenticacao/dashboard.html')   
+    
+def logout_user(request):
+    if 'sliding_token' in request.session:
+        del request.session['sliding_token']
+
+    return redirect('login_user')  
 '''
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])  
