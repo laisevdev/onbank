@@ -53,7 +53,32 @@ def register_user(request):
     return render(request, 'autenticacao/register.html')
 
 def login_user(request):
-        return render(request, 'autenticacao/login.html')
+    if request.method == "POST":
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+
+        
+        response = requests.post('http://127.0.0.1:8000/api/login/', json={
+            'email': email,
+            'password': password
+        })
+
+        if response.status_code == 200:
+            
+            data = response.json()  # API deve retornar JWT_SLIDING_TOKEN
+            sliding_token = data.get('token')
+            
+            print(sliding_token)
+
+            if sliding_token:
+                
+                request.session['sliding_token'] = sliding_token
+                
+            return redirect('dashboard')
+
+        return render(request, 'autenticacao/login.html', {'error': 'Email ou senha inválidos!'})
+
+    return render(request, 'autenticacao/login.html')
  
 def dashboard(request):
         return render(request, 'autenticacao/dashboard.html')   
