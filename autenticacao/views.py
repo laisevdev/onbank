@@ -7,6 +7,11 @@ from .serializers import UserRegisterSerializer
 from django.shortcuts import render, redirect
 import requests
 from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login
+from django.contrib.auth import get_user_model
+from django.utils.timezone import now
+
 
 
 class RegisterUserView(generics.CreateAPIView):
@@ -52,37 +57,56 @@ def register_user(request):
 
     return render(request, 'autenticacao/register.html')
 
+User = get_user_model()  # Pega o modelo de usuário personalizado
+
 def login_user(request):
     if request.method == "POST":
         email = request.POST.get('email')
         password = request.POST.get('password')
 
-        
         response = requests.post('http://127.0.0.1:8000/api/login/', json={
             'email': email,
             'password': password
         })
 
         if response.status_code == 200:
-            
-            data = response.json()  # API deve retornar JWT_SLIDING_TOKEN
+            data = response.json()  # A API deve retornar o token JWT Sliding
             sliding_token = data.get('token')
-            
-            print(sliding_token)
 
             if sliding_token:
-                
-                request.session['sliding_token'] = sliding_token
-                
-            return redirect('dashboard')
+                # Armazena o token na sessão
+                request.session['sliding_token'] = sliding_token  
+
+                # Busca o usuário no banco de dados
+                user = User.objects.filter(email=email).first()
+
+                if user:
+                    # Salva ID, nome e último login na sessão
+                    request.session['user_id'] = user.id  
+                    request.session['user_name'] = user.first_name  
+                    request.session['last_login'] = user.last_login.strftime('%d/%m/%Y %H:%M') if user.last_login else "Nunca"
+
+                    # Atualiza o `last_login` do usuário
+                    user.last_login = now()
+                    user.save(update_fields=['last_login'])
+
+                return redirect('dashboard')
 
         return render(request, 'autenticacao/login.html', {'error': 'Email ou senha inválidos!'})
 
     return render(request, 'autenticacao/login.html')
- 
+
+@login_required(login_url='login')
 def dashboard(request):
-        return render(request, 'autenticacao/dashboard.html')   
+    if not request.user:
+        return redirect('login')  # Redireciona para login se não estiver autenticado
     
+    context = {
+        'user_name': request.session.get('user_name', 'Cliente'),
+    }
+    
+    return render(request, 'autenticacao/dashboard.html', context)
+
 def logout_user(request):
     if 'sliding_token' in request.session:
         del request.session['sliding_token']
