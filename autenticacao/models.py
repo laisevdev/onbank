@@ -69,6 +69,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(null=False, blank=False,max_length=30)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)  
+    last_login = models.DateTimeField(null=True, blank=True) 
     user_permissions = models.ManyToManyField('auth.Permission', blank=True, related_name='user_permissions_usuario_customizado')
     groups = models.ManyToManyField('auth.Group', blank=True, related_name='groups_usuario_customizado')
 
